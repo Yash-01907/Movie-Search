@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-
+import { customMovieSearch } from "../api/tmdb";
 function Header() {
   const [movieSearch, setMovieSearch] = useState("");
-  const searchMovie = function (e) {
-    if(e.key==="Enter")
-    console.log(movieSearch)
+  const searchMovie = async function (e) {
+    if(e.key==="Enter"){
+      const data = await customMovieSearch(movieSearch)
+      console.log(data)
+    }
+    
   };
 
   return (
