@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { customMovieSearch } from "../api/tmdb";
+import { useDispatch } from "react-redux";
+import { addData } from "../slice/movieDataSlice";
 function Header() {
+  const dispatch = useDispatch();
   const [movieSearch, setMovieSearch] = useState("");
   const searchMovie = async function (e) {
-    if(e.key==="Enter"){
-      const data = await customMovieSearch(movieSearch)
-      console.log(data)
+    if (e.key === "Enter") {
+      const data = await customMovieSearch(movieSearch);
+      dispatch(addData(data.results))
+      // console.log(...data.results);
     }
-    
   };
 
   return (

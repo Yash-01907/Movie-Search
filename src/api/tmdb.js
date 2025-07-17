@@ -9,13 +9,17 @@ async function customMovieSearch(moveiName) {
     },
   };
 
-  fetch(
+  const res = await fetch(
     `https://api.themoviedb.org/3/search/movie?&query=${moveiName}`,
     options
-  )
-    .then((res) => res.json())
-    .then((res) => console.log(res))
-    .catch((err) => console.error(err));
+  );
+
+  if (!res.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const data = await res.json();
+  return data;
 }
 
 export { customMovieSearch };
