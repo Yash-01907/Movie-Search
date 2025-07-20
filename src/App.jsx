@@ -5,6 +5,7 @@ import "./App.css";
 import { popularMovies } from "./api/tmdb";
 import { useDispatch, useSelector } from "react-redux";
 import { addData } from "./slice/movieDataSlice";
+import MovieSuggestion from "./components/MovieSuggestion";
 
 function App() {
   const dispatch = useDispatch();
@@ -27,7 +28,7 @@ function App() {
           <p className="text-white text-center mt-10 text-xl">Loading...</p>
         </div>
       )}
-      <MovieCard />
+      <MovieSuggestion/>
     </>
   );
 }

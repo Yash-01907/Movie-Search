@@ -2,12 +2,10 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
 
-function MovieCard() {
+function MovieCard({movie}) {
  
-  const {movieData:movie} = useSelector((state) => state.movieData);
-  
     if (!movie || movie.length === 0) return;
-    const { title, poster_path, vote_average, release_date } = movie[0];
+    const { title, poster_path, vote_average, release_date } = movie;
     const posterUrl = poster_path
       ? `https://image.tmdb.org/t/p/w500${poster_path}`
       : "https://via.placeholder.com/500x750?text=No+Image";
