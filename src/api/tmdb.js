@@ -22,4 +22,24 @@ async function customMovieSearch(moveiName) {
   return data;
 }
 
-export { customMovieSearch };
+async function popularMovies(){
+  const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${config.tmdbApiKey}`
+  }
+};
+
+
+const res=await fetch('https://api.themoviedb.org/3/trending/movie/day?language=en-US', options)
+  if (!res.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const data = await res.json();
+  return data.results;
+
+}
+
+export { customMovieSearch, popularMovies };

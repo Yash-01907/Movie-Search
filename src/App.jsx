@@ -1,15 +1,35 @@
-import React from 'react'
-import Header from './components/Header'
-import Card from './components/Card'
-import "./App.css"
+import React, { useEffect } from "react";
+import Header from "./components/Header";
+import MovieCard from "./components/MovieCard";
+import "./App.css";
+import { popularMovies } from "./api/tmdb";
+import { useDispatch, useSelector } from "react-redux";
+import { addData } from "./slice/movieDataSlice";
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    async function fetchPopularMovies() {
+      const popularMoviesData = await popularMovies(); // ✅ await the result
+      dispatch(addData(popularMoviesData)); // ✅ dispatch actual movie array
+    }
+    fetchPopularMovies();
+  }, []);
+
+  const { movieData } = useSelector((state) => state.movieData);
+
   return (
     <>
-    <Header/>
-    <Card/>
+      <Header />
+      {(!movieData || movieData.length === 0) && (
+        <div className="flex w-screen h-screen justify-center items-center">
+          <p className="text-white text-center mt-10 text-xl">Loading...</p>
+        </div>
+      )}
+      <MovieCard />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
