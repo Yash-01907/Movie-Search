@@ -8,6 +8,7 @@ import { addData } from "./slice/movieDataSlice";
 import MovieSuggestion from "./components/MovieSuggestion";
 
 function App() {
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,12 +24,9 @@ function App() {
   return (
     <>
       <Header />
-      {(!movieData || movieData.length === 0) && (
-        <div className="flex w-screen h-screen justify-center items-center">
-          <p className="text-white text-center mt-10 text-xl">Loading...</p>
-        </div>
-      )}
-      <MovieSuggestion/>
+      
+      <MovieSuggestion />
+      
     </>
   );
 }

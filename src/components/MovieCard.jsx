@@ -1,5 +1,3 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 
 
 function MovieCard({movie}) {
@@ -16,7 +14,7 @@ function MovieCard({movie}) {
       <div className="p-3">
         <h3 className="text-md font-semibold truncate">{title}</h3>
         <p className="text-sm text-gray-600">
-          ⭐ {vote_average} | 📅 {release_date}
+          ⭐ {vote_average.toFixed(2)} | 📅 {release_date}
         </p>
       </div>
     </div>
