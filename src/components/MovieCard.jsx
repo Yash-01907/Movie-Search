@@ -9,7 +9,7 @@ function MovieCard({movie}) {
       : "https://via.placeholder.com/500x750?text=No+Image";
 
   return (
-    <div className="w-48 rounded-xl overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-300 mt-2">
+    <div className="w-52 rounded-xl overflow-hidden shadow-lg bg-white hover:scale-105 transition-transform duration-300 mt-2">
       <img src={posterUrl} alt={title} className="w-full h-72 object-cover" />
       <div className="p-3">
         <h3 className="text-md font-semibold truncate">{title}</h3>

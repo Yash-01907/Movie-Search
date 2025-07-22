@@ -6,6 +6,7 @@ import { popularMovies } from "./api/tmdb";
 import { useDispatch, useSelector } from "react-redux";
 import { addData } from "./slice/movieDataSlice";
 import MovieSuggestion from "./components/MovieSuggestion";
+import MovieDetailPage from "./components/MovieDetailPage";
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
       <Header />
       
       <MovieSuggestion />
+      {/* <MovieDetailPage/> */}
       
     </>
   );
