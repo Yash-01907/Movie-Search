@@ -42,4 +42,27 @@ const res=await fetch('https://api.themoviedb.org/3/trending/movie/day?language=
 
 }
 
-export { customMovieSearch, popularMovies };
+
+async function searchById(movieId){
+  const options = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${config.tmdbApiKey}`
+  }
+};
+
+
+const res=await fetch(`https://api.themoviedb.org/3/movie/${movieId}`, options)
+  if (!res.ok) {
+    throw new Error("Network response was not ok");
+  }
+
+  const data = await res.json();
+  console.log(data)
+  return data;
+
+
+}
+
+export { customMovieSearch, popularMovies, searchById };

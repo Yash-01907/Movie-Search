@@ -4,7 +4,7 @@ const Footer = () => {
   const githubUrl = 'https://github.com/yash-01907/';
 
   return (
-    <footer style={{ textAlign: 'center', padding: '20px', marginTop: '40px', borderTop: '1px solid #eaeaea' }} className='text-white'>
+    <footer style={{ textAlign: 'center', padding: '10px', marginTop: '20px', borderTop: '1px solid #eaeaea' }} className='text-white flex flex-row justify-center gap-5'>
       <p>
         © {new Date().getFullYear()} - Created by Yash
       </p>

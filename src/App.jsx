@@ -20,7 +20,7 @@ function App() {
       dispatch(addData(popularMoviesData)); // ✅ dispatch actual movie array
     }
     fetchPopularMovies();
-  }, []);
+  }, []); 
 
   const { movieData } = useSelector((state) => state.movieData);
 

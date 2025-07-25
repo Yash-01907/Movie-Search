@@ -1,40 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Heart, Bookmark, Check } from "lucide-react";
+import { useLoaderData, useParams } from "react-router";
+import { searchById } from "../api/tmdb";
 
-// (movieData and genreMap objects remain the same as before...)
-const movieData = {
-  adult: false,
-  backdrop_path: "/mljnZyk8gwO2YH9EDC5SMy4XgeP.jpg",
-  genre_ids: [18, 14],
-  id: 1295181,
-  original_language: "it",
-  original_title: "Avatar",
-  overview:
-    "Based on Théophile Gautier's novel of the same name, the film tells of the tragic love affair of Ottavio de Saville. He falls madly in love with Madame Prascovie Labinska, a woman very faithful to her husband, the Polish count Olaf Labinski. Alarmed by the growing physical and mental weariness of the desperate young man, his relatives and friends decide to turn to Doctor Balthazar, who has just returned from a trip to the Indies where he was initiated into the secrets of Brahman.",
-  popularity: 0.3399,
-  poster_path: "/nUTlHxnwomoIwojD0AF0OMzkonw.jpg",
-  release_date: "1916-03-06",
-  title: "Avatar",
-  video: false,
-  vote_average: 4.844,
-  vote_count: 16,
-};
 
-const genreMap = {
-  18: "Drama",
-  14: "Fantasy",
-  28: "Action",
-  12: "Adventure",
-  878: "Science Fiction",
-};
 
 function MovieDetailPage() {
+  // const [movieData, setMovieData] = useState(null);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [inWatchlist, setInWatchlist] = useState(false);
+  const params = useParams();
+  const movieId = params.movieId;
+
+  const movieData=useLoaderData()
+
+
+
+  if (!movieData)
+    return (
+      <h1 className="text-white text-4xl flex justify-center items-center min-h-screen">
+        Loading...
+      </h1>
+    );
+
   const backdropUrl = `https://image.tmdb.org/t/p/original${movieData.backdrop_path}`;
   const posterUrl = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
 
   // Step 1: Add state for favorite and watchlist buttons
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [inWatchlist, setInWatchlist] = useState(false);
 
   // Step 2: Create click handlers to toggle the state
   const handleFavoriteClick = () => {
@@ -82,12 +74,12 @@ function MovieDetailPage() {
               </span>
             </div>
             <div className="flex flex-wrap gap-2 mb-6">
-              {movieData.genre_ids.map((id) => (
+              {movieData.genres.map((genre) => (
                 <span
-                  key={id}
+                  key={genre.id}
                   className="bg-white/10 text-white text-xs font-semibold px-3 py-1 rounded-full"
                 >
-                  {genreMap[id] || "Unknown Genre"}
+                  {genre.name || "Unknown Genre"}
                 </span>
               ))}
             </div>
