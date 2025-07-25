@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { createElement } from "react";
 
 const initialState={
-    movieData:[]
+    movieData:null
 }
 
 const movieDataSlice = createSlice({
@@ -13,7 +13,7 @@ const movieDataSlice = createSlice({
             state.movieData = (action.payload);
         },
         removeData:(state)=>{
-            state.movieData = [];
+            state.movieData = null;
         }
     }
 })

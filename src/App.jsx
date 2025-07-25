@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { addData } from "./slice/movieDataSlice";
 import MovieSuggestion from "./components/MovieSuggestion";
 import MovieDetailPage from "./components/MovieDetailPage";
+import Footer from "./components/Footer";
+import { Outlet } from "react-router";
 
 function App() {
 
@@ -26,8 +28,8 @@ function App() {
     <>
       <Header />
       
-      {/* <MovieSuggestion /> */}
-      <MovieDetailPage/>
+      <Outlet/>
+      <Footer/>
       
     </>
   );

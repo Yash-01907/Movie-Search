@@ -124,7 +124,7 @@ function MovieDetailPage() {
                 )}
               </button>
             </div>
-            <div className=" border-l-4 border-[#515151] bg-[#232121]"> 
+            <div className=" border-l-4 border-[#515151] bg-[#232121]">
               <div className="flex-grow px-2">
                 <h2 className="text-2xl font-semibold mb-2 italic">Overview</h2>
                 <p className="text-gray-300 leading-relaxed">
