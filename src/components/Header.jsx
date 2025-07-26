@@ -1,26 +1,37 @@
-import  {  useState } from "react";
+import { useState } from "react";
 import { customMovieSearch } from "../api/tmdb";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addData } from "../slice/movieDataSlice";
-import { Link } from "react-router";
-
+import { Link,useNavigate } from "react-router";
 
 function Header() {
+  const navigate=useNavigate()
   const dispatch = useDispatch();
   const [movieSearch, setMovieSearch] = useState("");
   const searchMovie = async function (e) {
     if (e.key === "Enter") {
-      dispatch(addData(null))
+      dispatch(addData(null));
       const data = await customMovieSearch(movieSearch);
-      dispatch(addData(data.results))
+      dispatch(addData(data.results));
       // console.log(...data.results);
     }
   };
 
+  const authStatus = useSelector((state) => state.userLoggedIn);
+
+  const navItems = [
+    { name: "Login", active: !authStatus, slug: "/login" },
+    { name: "Sign Up", active: !authStatus, slug: "/signup" },
+    { name: "Favorites", active: authStatus, slug: "/favorites" },
+    { name: "Watch List", active: authStatus, slug: "/watchlist" },
+  ];
+
   return (
     <nav className="flex px-5 py-10 justify-between bg-[#ff4f4f] h-20 items-center ">
       <Link to={"/"}>
-      <div className="text-white font-bold text-3xl cursor-pointer">Movies</div>
+        <div className="text-white font-bold text-3xl cursor-pointer">
+          Movies
+        </div>
       </Link>
       <input
         // className="border-2 rounded-full px-5 w-[30%] text-lg   focus-within:ring-2 focus:outline-none py-2"
@@ -31,7 +42,24 @@ function Header() {
         onChange={(e) => setMovieSearch(e.target.value)}
         onKeyDown={(e) => searchMovie(e)}
       />
-      <div>Services</div>
+      <div>
+        <ul className="flex ml-auto">
+          {navItems.map((item) =>
+            item.active ? (
+              <li key={item.name}>
+                <button
+                  onClick={() => {
+                    navigate(item.slug,{preventScrollReset:true});
+                  }}
+                  className="inline-block px-4 py-2 duration-200 hover:bg-[#ff7a7a] rounded-full font-semibold"
+                >
+                  {item.name}
+                </button>
+              </li>
+            ) : null
+          )}
+        </ul>
+      </div>
     </nav>
   );
 }

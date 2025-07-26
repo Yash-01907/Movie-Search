@@ -9,12 +9,17 @@ import { Provider } from "react-redux";
 import MovieSuggestion from "./components/MovieSuggestion.jsx";
 import MovieDetailPage from "./components/MovieDetailPage.jsx";
 import { searchById } from "./api/tmdb.js";
+import Login from "./components/Login.jsx";
+import SignUp from "./components/SignUp.jsx";
+import Favorites from "./components/Favorites.jsx";
+import WatchList from "./components/WatchList.jsx";
 
 async function movieDataLoader({params}){
       const movieId=params.movieId
       const data = await searchById(movieId)
       return data
 }
+
 // const router = createBrowserRouter([
 //   {
 //     path: "/",
@@ -30,6 +35,10 @@ const router = createBrowserRouter([
     children: [
       { path: "/", element: <MovieSuggestion /> },
       { path: "movie/:movieId", element: <MovieDetailPage /> ,loader:movieDataLoader},
+      {path:'login',element:<Login/>},
+      {path:'signup',element:<SignUp/>},
+      {path:'favorites',element:<Favorites/>},
+      {path:'watchlist',element:<WatchList/>}
     ],
   },
 ]);
