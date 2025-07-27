@@ -1,14 +1,27 @@
 // src/components/SignUp.jsx
 // A sleek, dark-themed sign-up form refactored with React Hook Form and Tailwind CSS.
 
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router"; // Corrected import path
+import databaseService from "../appwrite/databaseService";
+import auth from "../appwrite/auth";
+import { useDispatch } from "react-redux";
+import { login } from "../slice/authSlice";
 
 function SignUp() {
+  // auth.logout();
   // Initialize React Hook Form
-  const { register, handleSubmit, formState: { errors }, watch } = useForm();
+  const dispatch = useDispatch();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    watch,
+  } = useForm();
   const navigate = useNavigate();
+
+  const [error, setError] = useState(false);
 
   // watch() lets us observe the value of the password field for validation
   const passwordValue = watch("password", "");
@@ -17,16 +30,33 @@ function SignUp() {
    * This function is called by handleSubmit upon successful validation.
    * @param {object} data - The validated form data.
    */
-  const createAccount = (data) => {
+  const createAccount = async (data) => {
+    try {
+      const newUser = await auth.createAccount(data);
+      if (newUser) console.log(newUser);
+      if (newUser) {
+        // --- THIS IS THE FIX ---
+        // Step 2: Log the new user in to create an active session
+        // const session = await auth.login(data);
+        await databaseService.createUserProfile(newUser);
+        dispatch(login(newUser));
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error.message);
+      await auth.logout();
+    }
     // The password match validation is now handled by react-hook-form,
     // so we don't need a manual check here.
 
-    // --- TODO: Place your registration API call here ---
-    // The 'data' object contains { fullName, email, password }
-    console.log("Registering user with:", data);
+    // if (session) {
+    //   // Step 3: Now that you're logged in, create the database profile
 
-    // On successful registration, navigate the user to another page
-    navigate("/");
+    //   // You can dispatch the login state to Redux here if needed
+    //   // dispatch(authLogin(newUser));
+
+    //   // Step 4: Navigate the user to the home page or wherever
+    // }
   };
 
   return (
@@ -44,10 +74,12 @@ function SignUp() {
 
         {/* The form now uses handleSubmit to wrap our createAccount function */}
         <form onSubmit={handleSubmit(createAccount)} className="space-y-4">
-          
           {/* Full Name Input Field */}
           <div>
-            <label htmlFor="fullName" className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="fullName"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Full Name
             </label>
             <input
@@ -57,12 +89,19 @@ function SignUp() {
               placeholder="John Doe"
               {...register("fullName", { required: "Full name is required" })}
             />
-            {errors.fullName && <p className="mt-1 text-xs text-red-400">{errors.fullName.message}</p>}
+            {errors.fullName && (
+              <p className="mt-1 text-xs text-red-400">
+                {errors.fullName.message}
+              </p>
+            )}
           </div>
 
           {/* Email Input Field */}
           <div>
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="email"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Email Address
             </label>
             <input
@@ -78,12 +117,19 @@ function SignUp() {
                 },
               })}
             />
-            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-400">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           {/* Password Input Field */}
           <div>
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="password"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Password
             </label>
             <input
@@ -99,12 +145,19 @@ function SignUp() {
                 },
               })}
             />
-            {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
+            {errors.password && (
+              <p className="mt-1 text-xs text-red-400">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
           {/* Confirm Password Input Field */}
           <div>
-            <label htmlFor="confirm-password"className="block mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="confirm-password"
+              className="block mb-2 text-sm font-medium text-gray-300"
+            >
               Confirm Password
             </label>
             <input
@@ -118,7 +171,11 @@ function SignUp() {
                   value === passwordValue || "The passwords do not match",
               })}
             />
-            {errors.confirmPassword && <p className="mt-1 text-xs text-red-400">{errors.confirmPassword.message}</p>}
+            {errors.confirmPassword && (
+              <p className="mt-1 text-xs text-red-400">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
 
           {/* Submit Button */}
@@ -137,7 +194,10 @@ function SignUp() {
         {/* Footer link to the Sign In page */}
         <p className="text-sm text-center text-gray-400">
           Already have an account?{" "}
-          <Link to="/login" className="font-medium text-blue-500 hover:underline">
+          <Link
+            to="/login"
+            className="font-medium text-blue-500 hover:underline"
+          >
             Sign In
           </Link>
         </p>

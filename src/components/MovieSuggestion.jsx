@@ -4,7 +4,6 @@ import { useSelector } from "react-redux";
 
 function MovieSuggestion() {
   const { movieData: movie } = useSelector((state) => state.movieData);
-  console.log(movie)
 
   return (
     <div className="flex flex-wrap justify-center gap-3 px-4 mt-5">
