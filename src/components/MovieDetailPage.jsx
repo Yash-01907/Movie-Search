@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Heart, Bookmark, Check } from "lucide-react";
 import { useLoaderData, useParams } from "react-router";
 import { searchById } from "../api/tmdb";
-
-
+import { useSelector } from "react-redux";
+import databaseService from "../appwrite/databaseService";
 
 function MovieDetailPage() {
   // const [movieData, setMovieData] = useState(null);
@@ -12,9 +12,48 @@ function MovieDetailPage() {
   const params = useParams();
   const movieId = params.movieId;
 
-  const movieData=useLoaderData()
+  const movieData = useLoaderData();
 
+  // Get the current user's data from Redux
+  const userData = useSelector((state) => state.auth.user);
 
+  useEffect(() => {
+    // Check if the user is logged in and we have their profile
+    if (userData) {
+      databaseService.getUserProfile(userData.userId).then((profile) => {
+        if (profile) {
+          // Check if the current movie's ID is in the user's lists
+          setIsFavorited(profile.favorites.includes(String(movieData.id)));
+          setInWatchlist(profile.watchList.includes(String(movieData.id)));
+        }
+      });
+    }
+  }, [userData, movieData]); // Re-run when user or movie changes
+
+  const handleFavoriteClick = async () => {
+    setIsFavorited(!isFavorited);
+    if (!userData) {
+      alert("Please log in to save movies!");
+      return;
+    }
+
+    try {
+      console.log(
+        `Updating favorites for user: ${userData.userId} with movie: ${movieData.id}`
+      );
+
+      // Call your new service function
+      await databaseService.updateFavorites(
+        userData.userId,
+        String(movieData.id)
+      );
+
+      alert(`'${movieData.title}' has been updated in your favorites!`);
+      // Optionally, you can update the UI here to show a filled/unfilled heart icon
+    } catch (error) {
+      alert("Failed to update favorites. Please try again.");
+    }
+  };
 
   if (!movieData)
     return (
@@ -29,13 +68,6 @@ function MovieDetailPage() {
   // Step 1: Add state for favorite and watchlist buttons
 
   // Step 2: Create click handlers to toggle the state
-  const handleFavoriteClick = () => {
-    setIsFavorited(!isFavorited);
-    // In a real app, you'd also make an API call here
-    console.log(
-      `Movie ${!isFavorited ? "added to" : "removed from"} favorites`
-    );
-  };
 
   const handleWatchlistClick = () => {
     setInWatchlist(!inWatchlist);
