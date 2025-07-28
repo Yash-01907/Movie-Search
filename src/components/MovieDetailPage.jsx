@@ -1,80 +1,75 @@
 import React, { useEffect, useState } from "react";
 import { Heart, Bookmark, Check } from "lucide-react";
 import { useLoaderData, useParams } from "react-router";
-import { searchById } from "../api/tmdb";
 import { useSelector } from "react-redux";
 import databaseService from "../appwrite/databaseService";
 
 function MovieDetailPage() {
-  // const [movieData, setMovieData] = useState(null);
-  const [isFavorited, setIsFavorited] = useState(false);
-  const [inWatchlist, setInWatchlist] = useState(false);
-  const params = useParams();
-  const movieId = params.movieId;
-
+  const { movieId } = useParams();
   const movieData = useLoaderData();
-
-  // Get the current user's data from Redux
   const userData = useSelector((state) => state.auth.user);
 
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [inWatchlist, setInWatchlist] = useState(false);
+
+  const backdropUrl = `https://image.tmdb.org/t/p/original${movieData?.backdrop_path}`;
+  const posterUrl = `https://image.tmdb.org/t/p/w500${movieData?.poster_path}`;
+
+  // Check for favorite & watchlist status on load
   useEffect(() => {
-    // Check if the user is logged in and we have their profile
-    if (userData) {
-      databaseService.getUserProfile(userData.userId).then((profile) => {
-        if (profile) {
-          // Check if the current movie's ID is in the user's lists
-          setIsFavorited(profile.favorites.includes(String(movieData.id)));
-          setInWatchlist(profile.watchList.includes(String(movieData.id)));
-        }
-      });
-    }
-  }, [userData, movieData]); // Re-run when user or movie changes
+    const checkUserLists = async () => {
+      if (!userData || !movieData?.id) return;
+
+      const profile = await databaseService.getUserProfile(userData.userId);
+      if (!profile) return;
+
+      const movieIdStr = String(movieData.id);
+      setIsFavorited(profile.favorites.includes(movieIdStr));
+      setInWatchlist(profile.watchList.includes(movieIdStr));
+    };
+
+    checkUserLists();
+  }, [userData, movieData]);
 
   const handleFavoriteClick = async () => {
-    setIsFavorited(!isFavorited);
-    if (!userData) {
-      alert("Please log in to save movies!");
-      return;
-    }
+    if (!userData) return alert("Please log in to save movies!");
+
+    setIsFavorited((prev) => !prev);
 
     try {
-      console.log(
-        `Updating favorites for user: ${userData.userId} with movie: ${movieData.id}`
-      );
-
-      // Call your new service function
       await databaseService.updateFavorites(
         userData.userId,
         String(movieData.id)
       );
-
       alert(`'${movieData.title}' has been updated in your favorites!`);
-      // Optionally, you can update the UI here to show a filled/unfilled heart icon
     } catch (error) {
       alert("Failed to update favorites. Please try again.");
     }
   };
 
-  if (!movieData)
+  const handleWatchlistClick = async () => {
+    if (!userData) return alert("Please log in to save movies!");
+
+    setInWatchlist((prev) => !prev);
+    try {
+      await databaseService.updateWatchlist(
+        userData.userId,
+        String(movieData.id)
+      );
+      alert(`'${movieData.title}' has been updated in your favorites!`);
+    } catch (error) {
+      alert("Failed to update favorites. Please try again.");
+    }
+    // You can optionally persist this to DB if needed
+  };
+
+  if (!movieData) {
     return (
       <h1 className="text-white text-4xl flex justify-center items-center min-h-screen">
         Loading...
       </h1>
     );
-
-  const backdropUrl = `https://image.tmdb.org/t/p/original${movieData.backdrop_path}`;
-  const posterUrl = `https://image.tmdb.org/t/p/w500${movieData.poster_path}`;
-
-  // Step 1: Add state for favorite and watchlist buttons
-
-  // Step 2: Create click handlers to toggle the state
-
-  const handleWatchlistClick = () => {
-    setInWatchlist(!inWatchlist);
-    console.log(
-      `Movie ${!inWatchlist ? "added to" : "removed from"} watchlist`
-    );
-  };
+  }
 
   return (
     <div
@@ -83,6 +78,7 @@ function MovieDetailPage() {
     >
       <div className="bg-black/60 min-h-screen flex items-center justify-center p-4 md:p-8">
         <div className="max-w-6xl w-full flex flex-col md:flex-row bg-black/50 backdrop-blur-lg rounded-xl overflow-hidden shadow-2xl">
+          {/* Poster */}
           <div className="w-full md:w-1/3">
             <img
               src={posterUrl}
@@ -90,14 +86,16 @@ function MovieDetailPage() {
               className="w-full h-full object-cover"
             />
           </div>
+
+          {/* Details */}
           <div className="w-full md:w-2/3 p-6 md:p-8 text-white flex flex-col">
             <h1 className="text-4xl md:text-5xl font-bold mb-2">
               {movieData.title}
             </h1>
+
+            {/* Meta info */}
             <div className="flex items-center space-x-4 text-gray-300 mb-4">
-              <span className="flex items-center">
-                ⭐ {movieData.vote_average.toFixed(1)}
-              </span>
+              <span>⭐ {movieData.vote_average.toFixed(1)}</span>
               <span>|</span>
               <span>{new Date(movieData.release_date).getFullYear()}</span>
               <span>|</span>
@@ -105,6 +103,8 @@ function MovieDetailPage() {
                 {movieData.original_language}
               </span>
             </div>
+
+            {/* Genres */}
             <div className="flex flex-wrap gap-2 mb-6">
               {movieData.genres.map((genre) => (
                 <span
@@ -116,23 +116,22 @@ function MovieDetailPage() {
               ))}
             </div>
 
-            {/* Step 3: Add the action buttons */}
+            {/* Actions */}
             <div className="flex items-center gap-4 mb-6">
               <button
                 onClick={handleFavoriteClick}
-                className="bg-white/10 p-3 rounded-full transition-all duration-300 ease-in-out hover:bg-white/20 active:scale-95"
+                className="bg-white/10 p-3 rounded-full transition hover:bg-white/20 active:scale-95"
                 aria-label="Toggle Favorite"
               >
-                {isFavorited ? (
-                  <Heart size={24} className="text-red-500 fill-current" />
-                ) : (
-                  <Heart size={24} />
-                )}
+                <Heart
+                  size={24}
+                  className={isFavorited ? "text-red-500 fill-current" : ""}
+                />
               </button>
 
               <button
                 onClick={handleWatchlistClick}
-                className="flex items-center gap-2 bg-white/10 px-4 py-3 rounded-full transition-all duration-300 ease-in-out hover:bg-white/20 active:scale-95"
+                className="flex items-center gap-2 bg-white/10 px-4 py-3 rounded-full transition hover:bg-white/20 active:scale-95"
                 aria-label="Toggle Watchlist"
               >
                 {inWatchlist ? (
@@ -148,13 +147,13 @@ function MovieDetailPage() {
                 )}
               </button>
             </div>
-            <div className=" border-l-4 border-[#515151] bg-[#232121]">
-              <div className="flex-grow px-2">
-                <h2 className="text-2xl font-semibold mb-2 italic">Overview</h2>
-                <p className="text-gray-300 leading-relaxed">
-                  {movieData.overview}
-                </p>
-              </div>
+
+            {/* Overview */}
+            <div className="border-l-4 border-[#515151] bg-[#232121] px-2 py-2">
+              <h2 className="text-2xl font-semibold mb-2 italic">Overview</h2>
+              <p className="text-gray-300 leading-relaxed">
+                {movieData.overview}
+              </p>
             </div>
           </div>
         </div>

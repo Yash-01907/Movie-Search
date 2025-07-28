@@ -13,7 +13,7 @@ function MovieSuggestion() {
         </div>
       ) : movie?.length > 0 ? (
         movie.map((mov, idx) => (
-          <div key={idx} className="w-[230px]">
+          <div key={idx} className="w-[230px]"> 
             <MovieCard movie={mov} />
           </div>
         ))

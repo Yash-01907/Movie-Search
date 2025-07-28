@@ -19,7 +19,7 @@ import HoverOverview from "./HoverOverview";
 function Header() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+// authService.logout()
   // Redux State
   const authStatus = useSelector((state) => state.auth.userLoggedIn);
   const userData = useSelector((state) => state.auth.user);
@@ -133,7 +133,7 @@ function Header() {
             <li key={item.name}>
               <button
                 onClick={() => navigate(item.slug)}
-                className="inline-block px-4 py-2 duration-200 hover:bg-[#ff7a7a] rounded-full font-semibold"
+                className="inline-block px-4 py-2 duration-200 hover:bg-[#ff7a7a] rounded-full font-semibold text-[#1e1e1e]"
               >
                 {item.name}
               </button>
