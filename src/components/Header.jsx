@@ -73,7 +73,7 @@ function Header() {
       dispatch(addData(null));
       const data = await customMovieSearch(movieSearch);
       dispatch(addData(data.results));
-      navigate('/search-results');
+      // navigate('/search-results');
     }
   };
 
