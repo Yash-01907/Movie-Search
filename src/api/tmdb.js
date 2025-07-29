@@ -59,7 +59,7 @@ const res=await fetch(`https://api.themoviedb.org/3/movie/${movieId}`, options)
   }
 
   const data = await res.json();
-  console.log(data)
+  // console.log(data)
   return data;
 
 
