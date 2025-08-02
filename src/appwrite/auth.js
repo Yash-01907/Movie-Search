@@ -43,6 +43,15 @@ class Auth {
       console.log("Error logging out:", error);
     }
   }
+
+  async getCurrentSession(){
+    try {
+    const user = await account.get(); // returns current user if logged in
+    return user;
+  } catch (error) {
+    return null;
+  }
+  }
 }
 
 export default new Auth();

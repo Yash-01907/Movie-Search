@@ -15,6 +15,17 @@ function App() {
   const dispatch = useDispatch();
   // const isLoggedIn=useSelector((state)=>state.auth.userLoggedIn)
 
+  useEffect(() => {
+    const initAuth = async () => {
+      // console.log("Hii")
+      const user = await auth.getCurrentSession();
+      if(user){
+        console.log(user)
+      }
+
+    };
+    initAuth();
+  });
   // if(isLoggedIn){
   //   auth.logout()
   //   dispatch(logout())
@@ -25,9 +36,7 @@ function App() {
       dispatch(addData(popularMoviesData)); // ✅ dispatch actual movie array
     }
     fetchPopularMovies();
-
   }, []);
-
 
   return (
     <>
