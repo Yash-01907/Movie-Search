@@ -46,10 +46,10 @@ class Auth {
 
   async getCurrentSession(){
     try {
-    const user = await account.get(); // returns current user if logged in
+    const user = await this.account.get(); // returns current user if logged in
     return user;
   } catch (error) {
-    return null;
+    throw new Error (error);
   }
   }
 }

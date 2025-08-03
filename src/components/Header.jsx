@@ -40,7 +40,7 @@ function Header() {
       setIsLoading(true);
 
       databaseService
-        .getUserProfile(userData.userId)
+        .getUserProfile(userData.userId||userData.$id)
         .then((profile) => {
           if (profile) {
             // Fetch movie details for favorites

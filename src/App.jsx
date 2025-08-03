@@ -5,27 +5,31 @@ import { popularMovies } from "./api/tmdb";
 import { useDispatch, useSelector } from "react-redux";
 import { addData } from "./slice/movieDataSlice";
 import Footer from "./components/Footer";
-import { Outlet } from "react-router";
+import { Outlet, useNavigate } from "react-router";
 import databaseService from "./appwrite/databaseService";
 import auth from "./appwrite/auth";
-import { logout } from "./slice/authSlice";
+import { login, logout } from "./slice/authSlice";
 
 function App() {
   // auth.logout()
   const dispatch = useDispatch();
+  const navigate=useNavigate()
   // const isLoggedIn=useSelector((state)=>state.auth.userLoggedIn)
 
   useEffect(() => {
     const initAuth = async () => {
-      // console.log("Hii")
-      const user = await auth.getCurrentSession();
+      console.log("Hii")
+      try{const user = await auth.getCurrentSession();
       if(user){
-        console.log(user)
+        dispatch(login(user))
+        navigate("/")
+      }}catch(error){
+        console.log(error)
       }
 
     };
     initAuth();
-  });
+  },[]);
   // if(isLoggedIn){
   //   auth.logout()
   //   dispatch(logout())
